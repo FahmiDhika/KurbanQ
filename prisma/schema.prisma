@@ -23,6 +23,12 @@ enum bayar {
   COD
 }
 
+enum statusBayar {
+  NEW
+  PAID
+  DONE
+}
+
 model admin {
   idAdmin           Int         @id @default(autoincrement())
   uuid               String      @unique @default("") 
@@ -75,7 +81,7 @@ model hewan {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   transaksi         transaksi[]
-  DetailTransaksi detailTransaksi[]
+  DetailTransaksi   detailTransaksi[]
 }
 
 model transaksi {
@@ -83,7 +89,7 @@ model transaksi {
   uuid               String      @default("")  @unique 
   tglTransaksi      DateTime    @default(now())
   totalBayar        Int         @default(0)
-  statusBayar       Boolean     @default(false)
+  statusBayar       statusBayar @default(NEW)
   pembayaran        bayar       @default(TRANSFER)
   hewan             hewan?      @relation(fields: [idHewan], references: [idHewan])
   idHewan           Int?
