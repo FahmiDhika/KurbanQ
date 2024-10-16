@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import hewanRoute from './Routers/hewanRoute'
-import penjualRoute from './Routers/penjualRoute'
+import penjualRoute from './Routers/userRoute'
 import { PORT } from './global'
 
 const app =  express()

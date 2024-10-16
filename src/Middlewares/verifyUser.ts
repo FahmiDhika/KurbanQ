@@ -7,7 +7,8 @@ export const addUserSchema = Joi.object({
     password: Joi.string().required(),
     hp: Joi.string().required(),
     alamat: Joi.string().required(),
-    profile: Joi.allow().optional()
+    profile: Joi.allow().optional(),
+    role: Joi.string().valid(`Penjual`, `Pelanggan`).required()
 })
 
 export const updateUserSchema = Joi.object({
@@ -16,7 +17,8 @@ export const updateUserSchema = Joi.object({
     password: Joi.string().optional(),
     hp: Joi.string().optional(),
     alamat: Joi.string().optional(),
-    profile: Joi.allow().optional()
+    profile: Joi.allow().optional(),
+    role: Joi.string().valid(`Penjual`, `Pelanggan`).optional()
 })
 
 export const authSchema = Joi.object({

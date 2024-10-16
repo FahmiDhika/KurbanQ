@@ -10,13 +10,14 @@ import { sign } from "jsonwebtoken"; // memberikan token untuk login
 
 const prisma = new PrismaClient({errorFormat: "pretty"})
 
+
 export const createUser = async(request: Request, response: Response) => {
     try {
-        const { nama, email, password, hp, alamat } = request.body
+        const { nama, email, password, hp, alamat, role } = request.body
         const uuid = uuidv4()
 
         const newUser = await prisma.penjual.create({
-            data: { uuid, nama, email, password: md5(password), hp, alamat }
+            data: { uuid, nama, email, password: md5(password), hp, alamat, role }
         })
 
         return response.json({
@@ -35,7 +36,7 @@ export const createUser = async(request: Request, response: Response) => {
 export const updateUser = async (request: Request, response: Response) => {
     try {
         const { idPenjual } = request.params
-        const { nama, email, password, hp, alamat } = request.body
+        const { nama, email, password, hp, alamat, role } = request.body
 
         const findUser = await prisma.penjual.findFirst({where: { idPenjual: {equals: Number(idPenjual)}}})
         if (!findUser) return response.status(200).json({
@@ -49,7 +50,8 @@ export const updateUser = async (request: Request, response: Response) => {
                 email: email || findUser.email,
                 password: password ? md5(password) : findUser.password,
                 hp: hp || findUser.hp,
-                alamat: alamat || findUser.alamat
+                alamat: alamat || findUser.alamat,
+                role: role || findUser.role
             }, where: {idPenjual: Number(idPenjual)}
         })
 

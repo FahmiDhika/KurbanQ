@@ -29,13 +29,9 @@ enum statusBayar {
   DONE
 }
 
-model admin {
-  idAdmin           Int         @id @default(autoincrement())
-  uuid               String      @unique @default("") 
-  nama              String      @default("")
-  password          String      @default("")
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+enum role {
+  Pelanggan
+  Penjual
 }
 
 model penjual {
@@ -47,6 +43,7 @@ model penjual {
   hp                String      @default("")
   alamat            String      @default("")  @db.Text
   profile           String      @default("")
+  role              role        @default(Penjual)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   hewan             hewan[]
@@ -62,6 +59,7 @@ model pelanggan {
   hp                String      @default("")
   alamt             String      @default("")  @db.Text
   profile           String      @default("")
+  role              role        @default(Pelanggan)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   transaksi         transaksi[]

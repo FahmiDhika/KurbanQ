@@ -1,7 +1,7 @@
 import express  from "express";
-import { verifyAddUser, verifyAuthentication } from "../Middlewares/verifyPenjual";
-import { authentication, createUser, deleteUser, penjualPicture, updateUser } from "../Controllers/penjualController";
-import uploadFile from "../Middlewares/penjualUpload";
+import { verifyAddUser, verifyAuthentication } from "../Middlewares/verifyUser";
+import { authentication, createUser, deleteUser, penjualPicture, updateUser } from "../Controllers/userController";
+import uploadFile from "../Middlewares/userUpload";
 
 const app = express()
 app.use(express.json())
