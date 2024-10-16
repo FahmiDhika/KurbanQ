@@ -3,6 +3,8 @@ import { PrismaClient, statusBayar} from "@prisma/client";
 import { v4 as uuidv4 } from "uuid"
 import { request } from "http";
 import { number } from "joi";
+import { BASE_URL } from "../global";
+import fs, { stat } from "fs";
 
 const prisma = new PrismaClient({errorFormat: "pretty"})
 
@@ -92,6 +94,50 @@ export const updateHewan = async (request: Request, response: Response) => {
     }
 }
 
+export const changePicture = async (request: Request, response: Response) => {
+    try {
+        const { id } = request.params // mendapatkan id menu yang dikirimkan melalui parameter
+    
+        // id dicek apakah ada tau tidak
+        const findHewan = await prisma.hewan.findFirst({ where: { idHewan: Number(id) }})
+        if (!findHewan) return response.status(200).json({
+            status: false,
+            message: `Menu tidak ditemukan`
+        })
+
+        // default value untuk filename
+        let filename = findHewan.foto
+
+        if (request.file) {
+            // update nama file dari foto yang di upload
+            filename = request.file.filename
+            
+            // cek foto yang lama di dalam folder
+            let path = `${BASE_URL}../public/hewan_picture/${findHewan.foto}`
+            let exists = fs.existsSync(path)
+
+            // hapus foto yang lama jika di upload file baru
+            if (exists && findHewan.foto !== ``) fs.unlinkSync(path) // unlinksync untuk menghapus file tersebut
+        }
+
+        const updatePicture = await prisma.hewan.update({
+            data: { foto: filename },
+            where: { idHewan: Number(id) }
+        })
+
+        return response.json({
+            status: true,
+            data: updatePicture,
+            messgae: `Foto Telah Diubah`
+        }).status(200)
+    } catch (error) {
+        return response.json({
+            status: false,
+            message: `there is an error ${error}`
+        }).status(400)
+    }
+}
+
 export const deleteHewan = async (request: Request, response: Response) => {
     try {
         const { idHewan } = request.params // mendapatkan id hewan dari request params
@@ -102,6 +148,12 @@ export const deleteHewan = async (request: Request, response: Response) => {
             status: false,
             message: `Hewan tidak ditemukan`
         })
+
+        let path = `${BASE_URL}../public/menu_picture/${findHewan.foto}`
+        let exists = fs.existsSync(path)
+
+        // hapus foto yang lama jika file baru di upload
+        if(exists && findHewan.foto !== ``) fs.unlinkSync(path)
 
         // proses untuk delete hewan
         const deleteHewan = await prisma.hewan.delete({
