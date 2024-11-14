@@ -16,7 +16,7 @@ export const createUser = async(request: Request, response: Response) => {
         const { nama, email, password, hp, alamat, role } = request.body
         const uuid = uuidv4()
 
-        const newUser = await prisma.penjual.create({
+        const newUser = await prisma.user.create({
             data: { uuid, nama, email, password: md5(password), hp, alamat, role }
         })
 
@@ -38,13 +38,13 @@ export const updateUser = async (request: Request, response: Response) => {
         const { idPenjual } = request.params
         const { nama, email, password, hp, alamat, role } = request.body
 
-        const findUser = await prisma.penjual.findFirst({where: { idPenjual: {equals: Number(idPenjual)}}})
+        const findUser = await prisma.user.findFirst({where: { idUser: {equals: Number(idPenjual)}}})
         if (!findUser) return response.status(200).json({
             status: false,
             message: `User tidak ditemukan`
         })
 
-        const updateUser = await prisma.penjual.update({
+        const updateUser = await prisma.user.update({
             data: {
                 nama: nama || findUser.nama,
                 email: email || findUser.email,
@@ -52,7 +52,7 @@ export const updateUser = async (request: Request, response: Response) => {
                 hp: hp || findUser.hp,
                 alamat: alamat || findUser.alamat,
                 role: role || findUser.role
-            }, where: {idPenjual: Number(idPenjual)}
+            }, where: {idUser: Number(idPenjual)}
         })
 
         return response.json({
@@ -72,7 +72,7 @@ export const penjualPicture = async (request: Request, response: Response) => {
     try {
         const { idPenjual } = request.params
 
-        const findPenjual = await prisma.penjual.findFirst({ where: { idPenjual: {equals: parseInt(idPenjual)} }})
+        const findPenjual = await prisma.user.findFirst({ where: { idUser: {equals: parseInt(idPenjual)} }})
         if (!findPenjual) return response.status(200).json({
             status: false,
             message: `Menu tidak ditemukan`
@@ -93,9 +93,9 @@ export const penjualPicture = async (request: Request, response: Response) => {
             if (exists && findPenjual.profile !== ``) fs.unlinkSync(path) // unlinksync untuk menghapus file tersebut
         }
 
-        const updatePicture = await prisma.penjual.update({
+        const updatePicture = await prisma.user.update({
             data: { profile: filename },
-            where: { idPenjual: Number(idPenjual) }
+            where: { idUser: Number(idPenjual) }
         })
 
         return response.json({
@@ -115,7 +115,7 @@ export const deleteUser = async (request: Request, response: Response) => {
     try {
         const { idPenjual } = request.params
 
-        const findPenjual = await prisma.penjual.findFirst({ where: { idPenjual: Number(idPenjual) }})
+        const findPenjual = await prisma.user.findFirst({ where: { idUser: Number(idPenjual) }})
         if (!findPenjual) return response.status(200).json({
             status: false,
             message: `Menu tidak ditemukan`
@@ -128,8 +128,8 @@ export const deleteUser = async (request: Request, response: Response) => {
         // hapus foto yang lama jika file baru di upload
         if(exists && findPenjual.profile !== ``) fs.unlinkSync(path)
         
-        const deleteUser = await prisma.penjual.delete({
-            where: { idPenjual: Number(idPenjual) }
+        const deleteUser = await prisma.user.delete({
+            where: { idUser: Number(idPenjual) }
         })
 
         return response.json({
@@ -149,20 +149,21 @@ export const authentication = async (request: Request, response: Response) => {
     try {
         const { email, password } = request.body
         
-        const findPenjual = await prisma.penjual.findFirst({
+        const user = await prisma.user.findFirst({
             where: { email, password: md5(password) }
         })
 
-        if (!findPenjual) return response.status(200).json({
+        if (!user) return response.status(200).json({
             status: false,
             logged: false,
             message: `Email atau Password invalid`
         })
 
         let data = {
-            id: findPenjual.idPenjual,
-            name: findPenjual.nama,
-            email: findPenjual.email,
+            id: user.idUser,
+            name: user.nama,
+            email: user.email,
+            role: user.role
         }
 
         // menyiapkan data yang akan dijadikan token

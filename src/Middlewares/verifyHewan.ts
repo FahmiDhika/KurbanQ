@@ -9,7 +9,8 @@ export const addHewanSchema = Joi.object({
     harga: Joi.number().min(0).required(),
     kategori: Joi.string().valid(`SAPI`, `KAMBING`).required(),
     deskripsi: Joi.string().required(),
-    foto: Joi.allow().optional()
+    foto: Joi.allow().optional(),
+    user: Joi.required()
 })
 
 export const updateHewanSchema = Joi.object({
@@ -18,7 +19,8 @@ export const updateHewanSchema = Joi.object({
     harga: Joi.number().min(0).optional(),
     kategori: Joi.string().valid(`SAPI`, `KAMBING`).optional(),
     deskripsi: Joi.string().optional(),
-    foto: Joi.allow().optional()
+    foto: Joi.allow().optional(),
+    user: Joi.required()
 })
 
 export const verifyAddHewan = (request: Request, response: Response, next: NextFunction) => {

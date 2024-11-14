@@ -34,8 +34,8 @@ enum role {
   Penjual
 }
 
-model penjual {
-  idPenjual         Int         @id @default(autoincrement())
+model user {
+  idUser            Int         @id @default(autoincrement())
   uuid              String      @unique @default("")
   nama              String      @default("")
   email             String      @default("")  @unique
@@ -43,25 +43,10 @@ model penjual {
   hp                String      @default("")
   alamat            String      @default("")  @db.Text
   profile           String      @default("")
-  role              role        @default(Penjual)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  hewan             hewan[]
-  transaksi         transaksi[] 
-}
-
-model pelanggan {
-  idPelanggan       Int         @id @default(autoincrement())
-  uuid               String      @unique @default("") 
-  nama              String      @default("")
-  email             String      @default("")  @unique
-  password          String      @default("")
-  hp                String      @default("")
-  alamt             String      @default("")  @db.Text
-  profile           String      @default("")
   role              role        @default(Pelanggan)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
+  hewan             hewan[]
   transaksi         transaksi[]
 }
 
@@ -74,27 +59,21 @@ model hewan {
   kategori          jenisHewan  @default(SAPI)
   deskripsi         String      @default("")  @db.Text
   foto              String      @default("")
-  penjual           penjual?    @relation(fields: [idPenjual], references: [idPenjual])
+  penjual           user?    @relation(fields: [idPenjual], references: [idUser])
   idPenjual         Int?
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
-  transaksi         transaksi[]
   DetailTransaksi   detailTransaksi[]
 }
 
 model transaksi {
   idTransaksi       Int         @id @default(autoincrement())
-  uuid               String      @default("")  @unique 
-  tglTransaksi      DateTime    @default(now())
+  uuid               String     @default("")  @unique 
   totalBayar        Int         @default(0)
   statusBayar       statusBayar @default(NEW)
   pembayaran        bayar       @default(TRANSFER)
-  hewan             hewan?      @relation(fields: [idHewan], references: [idHewan])
-  idHewan           Int?
-  penjual           penjual?    @relation(fields: [idPenjual], references: [idPenjual])
-  idPenjual         Int?
-  pelanggan         pelanggan?  @relation(fields: [idPelanggan], references: [idPelanggan])
-  idPelanggan       Int?
+  user              user?       @relation( fields: [idUser], references: [idUser])
+  idUser            Int?
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   detailTransaksi   detailTransaksi[]
@@ -102,8 +81,7 @@ model transaksi {
 
 model detailTransaksi {
   idDetail          Int         @id @default(autoincrement())
-  uuid               Int         @default(0) @unique
-  jumlah            Int         @default(0)
+  uuid               String         @default("") @unique
   transaksi         transaksi?  @relation(fields: [idTransaksi], references: [idTransaksi])
   idTransaksi       Int?
   hewan             hewan?      @relation(fields: [idHewan], references: [idHewan])
