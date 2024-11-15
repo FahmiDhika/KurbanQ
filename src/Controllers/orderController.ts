@@ -117,7 +117,7 @@ export const getAllOrders = async (request: Request, response: Response) => {
 export const createOrder = async (request: Request, response: Response) => {
   try {
     /** get requested data (data has been sent from request) */
-    const { pembayaran, totalBayar, detailTransaksi, user } = request.body;
+    const { pembayaran, detailTransaksi, user } = request.body;
     const uuid = uuidv4();
 
     /** validate the user input */
@@ -131,7 +131,6 @@ export const createOrder = async (request: Request, response: Response) => {
     /** loop details of order to check menu and count the total price */
     let total_price = 0;
     for (let index = 0; index < detailTransaksi.length; index++) {
-      console.log(total_price);
       const { hewanId } = detailTransaksi[index];
       const detailHewan = await prisma.hewan.findFirst({
         where: {
@@ -145,7 +144,6 @@ export const createOrder = async (request: Request, response: Response) => {
         });
       total_price += detailHewan.harga;
     }
-    console.log("keterangan harga = " + total_price);
 
     /** process to save new order */
     const newOrder = await prisma.transaksi.create({
