@@ -191,7 +191,7 @@ export const createOrder = async (request: Request, response: Response) => {
 export const updateStatusOrder = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { statusBayar } = req.body;
 
     const findOrder = await prisma.transaksi.findFirst({
       where: { idTransaksi: Number(id) },
@@ -204,7 +204,7 @@ export const updateStatusOrder = async (req: Request, res: Response) => {
 
     const editedUser = await prisma.transaksi.update({
       data: {
-        statusBayar: status || findOrder.statusBayar,
+        statusBayar: statusBayar || findOrder.statusBayar,
       },
       where: { idTransaksi: Number(id) },
     });

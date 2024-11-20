@@ -13,8 +13,8 @@ export const getAllHewan = async (request: Request, response: Response) => {
     const { search } = request.query;
     const allHewan = await prisma.hewan.findMany({
       where: {
-        umur: {
-          equals: search ? Number(search) : 0,
+        berat: {
+          contains: search?.toString() || ""
         },
       },
     });
