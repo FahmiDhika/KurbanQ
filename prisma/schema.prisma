@@ -29,6 +29,11 @@ enum statusBayar {
   DONE
 }
 
+enum statusHewan {
+  TERSEDIA
+  HABIS
+}
+
 enum role {
   Pelanggan
   Penjual
@@ -59,7 +64,8 @@ model hewan {
   kategori          jenisHewan  @default(SAPI)
   deskripsi         String      @default("")  @db.Text
   foto              String      @default("")
-  penjual           user?    @relation(fields: [idPenjual], references: [idUser])
+  statusHewan       statusHewan @default(TERSEDIA)
+  penjual           user?       @relation(fields: [idPenjual], references: [idUser])
   idPenjual         Int?
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt

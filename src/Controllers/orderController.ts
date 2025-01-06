@@ -124,25 +124,38 @@ export const createOrder = async (request: Request, response: Response) => {
     if (!user || !user.id) {
       return response.status(400).json({
         status: false,
-        message: "User information is incomplete.",
+        message: "Informasi user tidak lengkap.",
       });
     }
 
-    /** loop details of order to check menu and count the total price */
+    /** Collect unavailable hewan IDs */
     let total_price = 0;
+    const unavailableHewan = [];
+
     for (let index = 0; index < detailTransaksi.length; index++) {
       const { hewanId } = detailTransaksi[index];
+
+      // Check if the animal is available
       const detailHewan = await prisma.hewan.findFirst({
         where: {
           idHewan: hewanId,
+          statusHewan: "TERSEDIA", // Ensure the animal is available
         },
       });
-      if (!detailHewan)
-        return response.status(200).json({
-          status: false,
-          message: `Hewan with id ${hewanId} is not found`,
-        });
-      total_price += detailHewan.harga;
+
+      if (!detailHewan) {
+        unavailableHewan.push(hewanId);
+      } else {
+        total_price += detailHewan.harga;
+      }
+    }
+
+    // If there are unavailable hewan, return error with detailed message
+    if (unavailableHewan.length > 0) {
+      return response.status(400).json({
+        status: false,
+        message: `Hewan yang diminta tidak ditemukan atau sudah terjual: ${unavailableHewan.join(", ")}.`,
+      });
     }
 
     /** process to save new order */
@@ -163,6 +176,8 @@ export const createOrder = async (request: Request, response: Response) => {
     for (let index = 0; index < detailTransaksi.length; index++) {
       const uuid = uuidv4();
       const { hewanId } = detailTransaksi[index];
+
+      // Create detail transaksi
       await prisma.detailTransaksi.create({
         data: {
           uuid,
@@ -170,23 +185,28 @@ export const createOrder = async (request: Request, response: Response) => {
           idHewan: Number(hewanId),
         },
       });
+
+      // Update the status of the animal to 'HABIS'
+      await prisma.hewan.update({
+        where: { idHewan: hewanId },
+        data: { statusHewan: "HABIS" },
+      });
     }
-    return response
-      .json({
-        status: true,
-        data: newOrder,
-        message: `New Order has been created.`,
-      })
-      .status(200);
+
+    return response.status(200).json({
+      status: true,
+      data: newOrder,
+      message: `New Order has been created.`,
+    });
   } catch (error) {
-    return response
-      .json({
-        status: false,
-        message: `There is an error: ${error}`,
-      })
-      .status(400);
+    return response.status(400).json({
+      status: false,
+      message: `There is an error: ${error}`,
+    });
   }
 };
+
+
 
 export const updateStatusOrder = async (req: Request, res: Response) => {
   try {

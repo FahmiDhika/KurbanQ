@@ -72,7 +72,7 @@ export const updateHewan = async (request: Request, response: Response) => {
   try {
     const { idHewan } = request.params; // mendapatkan request berupa ID yang dikirim melalui parameter
     const { user } = request.body.user;
-    const { berat, umur, harga, kategori, deskripsi } = request.body; // mendapatkan request data dair body
+    const { berat, umur, harga, kategori, deskripsi, statusHewan } = request.body; // mendapatkan request data dair body
 
     // memastikan data ada di database
     const findHewan = await prisma.hewan.findFirst({
@@ -92,6 +92,7 @@ export const updateHewan = async (request: Request, response: Response) => {
         kategori: kategori || findHewan.kategori,
         deskripsi: deskripsi || findHewan.deskripsi,
         idPenjual: user ? user.id : findHewan.idPenjual,
+        statusHewan: statusHewan || findHewan.statusHewan
       },
       where: { idHewan: Number(idHewan) },
     });

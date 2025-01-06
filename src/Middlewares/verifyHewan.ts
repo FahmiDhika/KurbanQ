@@ -10,6 +10,7 @@ export const addHewanSchema = Joi.object({
     kategori: Joi.string().valid(`SAPI`, `KAMBING`).required(),
     deskripsi: Joi.string().required(),
     foto: Joi.allow().optional(),
+    statusHewan: Joi.string().valid(`TERSEDIA`, `HABIS`).required(),
     user: Joi.required()
 })
 
@@ -20,6 +21,7 @@ export const updateHewanSchema = Joi.object({
     kategori: Joi.string().valid(`SAPI`, `KAMBING`).optional(),
     deskripsi: Joi.string().optional(),
     foto: Joi.allow().optional(),
+    statusHewan: Joi.string().valid(`TERSEDIA`, `HABIS`).required(),
     user: Joi.required()
 })
 
