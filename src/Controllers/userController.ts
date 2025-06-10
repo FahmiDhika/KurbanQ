@@ -175,6 +175,7 @@ export const authentication = async (request: Request, response: Response) => {
         return response.status(200).json({
             status: true,
             logged: true,
+            data: data,
             message: `Login sukses`,
             token
         })
